@@ -1,0 +1,31 @@
+onPanStarted(String nodeName) {
+  print("Started panning node: $nodeName");
+}
+
+onPanChanged(String nodeName, Matrix4 newTransform) {
+  print("Panning node: $nodeName");
+  final pannedNode =
+      this.nodes.firstWhere((element) => element.name == nodeName, orElse: () => null);
+
+  if (pannedNode != null) {
+    // Update the node's transform in real-time
+    pannedNode.transform = newTransform;
+    this.arObjectManager!.updateNode(pannedNode);
+  } else {
+    print("Node not found: $nodeName");
+  }
+}
+
+onPanEnded(String nodeName, Matrix4 newTransform) {
+  print("Ended panning node: $nodeName");
+  final pannedNode =
+      this.nodes.firstWhere((element) => element.name == nodeName, orElse: () => null);
+
+  if (pannedNode != null) {
+    // Apply the final transformation to the node
+    pannedNode.transform = newTransform;
+    this.arObjectManager!.updateNode(pannedNode);
+  } else {
+    print("Node not found: $nodeName");
+  }
+}
