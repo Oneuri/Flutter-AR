@@ -106,3 +106,28 @@ Future<void> onPlaneOrPointTapped(List<ARHitTestResult> hitTestResults) async {
 }
 
 #####################################################################################################################
+15:59 fixed null error
+
+onPanChanged(String nodeName, Matrix4 newTransform) {
+  print("Continued panning node: $nodeName");
+
+  // Find the node being panned
+  final ARNode? pannedNode = this.nodes.firstWhere(
+    (element) => element.name == nodeName,
+    orElse: () {
+      print("Node not found: $nodeName");
+      return null; // Return null if the node is not found
+    },
+  );
+
+  if (pannedNode != null) {
+    // Update the node's transform with the new transformation matrix
+    pannedNode.transform = newTransform;
+
+    // Optional: Log the new transformation matrix for debugging
+    print("New transform for $nodeName: $newTransform");
+  } else {
+    print("Panning failed: Node not found.");
+  }
+}
+#####################################################################################################################
