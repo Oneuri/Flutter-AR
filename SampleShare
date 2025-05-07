@@ -1,4 +1,4 @@
-
+#####################################################################################################################
 
 onPanStarted(String nodeName) {
   print("Started panning node: $nodeName");
@@ -32,7 +32,7 @@ onPanEnded(String nodeName, Matrix4 newTransform) {
   }
 }
 
-
+#####################################################################################################################
 15:40
 
 onPanEnded(String nodeName, Matrix4 newTransform) {
@@ -47,6 +47,7 @@ onPanEnded(String nodeName, Matrix4 newTransform) {
   pannedNode.transform = newTransform;
 }
 
+#####################################################################################################################
 15:43
 onPanChanged(String nodeName, Matrix4 newTransform) {
   print("Continued panning node: $nodeName");
@@ -68,3 +69,40 @@ onPanChanged(String nodeName, Matrix4 newTransform) {
     print("New transform for $nodeName: $newTransform");
   }
 }
+
+#####################################################################################################################
+15:52 onPlaneOrPointTapped method
+
+Future<void> onPlaneOrPointTapped(List<ARHitTestResult> hitTestResults) async {
+  var singleHitTestResult = hitTestResults.firstWhere(
+      (hitTestResult) => hitTestResult.type == ARHitTestResultType.plane);
+  if (singleHitTestResult != null) {
+    var newAnchor =
+        ARPlaneAnchor(transformation: singleHitTestResult.worldTransform);
+    bool? didAddAnchor = await this.arAnchorManager!.addAnchor(newAnchor);
+    if (didAddAnchor!) {
+      this.anchors.add(newAnchor);
+
+      var newNode = ARNode(
+        type: NodeType.localGLTF2,
+        uri: "Models/Chicken_01/Chicken_01.gltf",
+        scale: Vector3(0.2, 0.2, 0.2),
+        position: Vector3(0.0, 0.0, 0.0),
+        rotation: Vector4(1.0, 0.0, 0.0, 0.0),
+        name: "ChickenNode", // Ensure the node has a unique name
+      );
+
+      bool? didAddNodeToAnchor =
+          await this.arObjectManager!.addNode(newNode, planeAnchor: newAnchor);
+      if (didAddNodeToAnchor!) {
+        this.nodes.add(newNode); // Add the node to the list
+      } else {
+        this.arSessionManager!.onError!("Adding Node to Anchor failed");
+      }
+    } else {
+      this.arSessionManager!.onError!("Adding Anchor failed");
+    }
+  }
+}
+
+#####################################################################################################################
