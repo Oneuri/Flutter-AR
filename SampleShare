@@ -259,3 +259,78 @@ onPanChanged(String nodeName, Matrix4 newTransform) {
     print("New transform for $nodeName: $newTransform");
   }
 }
+#####################################################################################################################
+8th may 15:15 PM
+onPanStarted(String nodeName) {
+  print("Started panning node " + nodeName);
+}
+
+onPanChanged(String nodeName, Matrix4 newTransform) {
+  print("Continued panning node " + nodeName);
+
+  try {
+    // Find the node being panned
+    final pannedNode = this.nodes.firstWhere((element) => element.name == nodeName);
+
+    // Update the node's transform with the new transformation matrix
+    pannedNode.transform = newTransform;
+
+    // Optional: Log the new transformation matrix for debugging
+    print("New transform for $nodeName: $newTransform");
+  } catch (e) {
+    // Handle the case where the node is not found
+    print("Node not found: $nodeName");
+  }
+}
+
+onPanEnded(String nodeName, Matrix4 newTransform) {
+  print("Ended panning node " + nodeName);
+
+  try {
+    // Find the node being panned
+    final pannedNode = this.nodes.firstWhere((element) => element.name == nodeName);
+
+    // Apply the final transformation to the node
+    pannedNode.transform = newTransform;
+
+    // Optional: Log the final transformation matrix for debugging
+    print("Final transform for $nodeName: $newTransform");
+  } catch (e) {
+    // Handle the case where the node is not found
+    print("Node not found: $nodeName");
+  }
+}
+
+Future<void> onPlaneOrPointTapped(List<ARHitTestResult> hitTestResults) async {
+  var singleHitTestResult = hitTestResults.firstWhere(
+      (hitTestResult) => hitTestResult.type == ARHitTestResultType.plane);
+  if (singleHitTestResult != null) {
+    var newAnchor =
+        ARPlaneAnchor(transformation: singleHitTestResult.worldTransform);
+    bool? didAddAnchor = await this.arAnchorManager!.addAnchor(newAnchor);
+    if (didAddAnchor!) {
+      this.anchors.add(newAnchor);
+
+      // Add a node to the anchor
+      var newNode = ARNode(
+        type: NodeType.localGLTF2,
+        uri: "Models/Chicken_01/Chicken_01.gltf",
+        scale: Vector3(0.2, 0.2, 0.2),
+        position: Vector3(0.0, 0.0, 0.0),
+        rotation: Vector4(1.0, 0.0, 0.0, 0.0),
+        name: "ChickenNode", // Assign a unique name to the node
+      );
+
+      print("Trying to add node");
+      bool? didAddNodeToAnchor =
+          await this.arObjectManager!.addNode(newNode, planeAnchor: newAnchor);
+      if (didAddNodeToAnchor!) {
+        this.nodes.add(newNode);
+      } else {
+        this.arSessionManager!.onError!("Adding Node to Anchor failed");
+      }
+    } else {
+      this.arSessionManager!.onError!("Adding Anchor failed");
+    }
+  }
+}
