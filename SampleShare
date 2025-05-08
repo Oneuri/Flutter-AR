@@ -234,3 +234,6 @@ onPanChanged(String nodeName, Matrix4 newTransform) {
   }
 }
 #####################################################################################################################
+8/5/2025 8:57
+A value of type 'dynamic Function(String, Matrix4)' can't be assigned to a variable of type 'NodePanChangeHandler?'.
+Try changing the type of the variable, or casting the right-hand type to 'NodePanChangeHandler?'.
