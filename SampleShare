@@ -1,4 +1,4 @@
-#####################################################################################################################
+#####################################################################################################################11
 
 onPanStarted(String nodeName) {
   print("Started panning node: $nodeName");
@@ -501,3 +501,59 @@ void onPanEnded(String nodeName, Matrix4 newTransform) {
 #####################################################################################################################
 
 _TypeError (type '(String, Matrix4) => void' is not a subtype of type '((String) => void)?' in type cast)
+
+this.arObjectManager!.onPanChange = (String nodeName) {
+  onPanChanged(nodeName, Matrix4.identity());
+};
+void onARViewCreated(
+  ARSessionManager arSessionManager,
+  ARObjectManager arObjectManager,
+  ARAnchorManager arAnchorManager,
+  ARLocationManager arLocationManager,
+) {
+  this.arSessionManager = arSessionManager;
+  this.arObjectManager = arObjectManager;
+  this.arAnchorManager = arAnchorManager;
+
+  this.arSessionManager!.onInitialize(
+    showFeaturePoints: false,
+    showPlanes: true,
+    customPlaneTexturePath: "Images/triangle.png",
+    showWorldOrigin: true,
+    handlePans: true,
+    handleRotation: true,
+  );
+  this.arObjectManager!.onInitialize();
+
+  this.arSessionManager!.onPlaneOrPointTap = onPlaneOrPointTapped;
+  this.arObjectManager!.onPanStart = onPanStarted;
+  this.arObjectManager!.onPanChange = (String nodeName) {
+    onPanChanged(nodeName, Matrix4.identity());
+  };
+  this.arObjectManager!.onPanEnd = (String nodeName) {
+    onPanEnded(nodeName, Matrix4.identity());
+  };
+  this.arObjectManager!.onRotationStart = onRotationStarted;
+  this.arObjectManager!.onRotationChange = onRotationChanged;
+  this.arObjectManager!.onRotationEnd = onRotationEnded;
+}
+
+void onPanChanged(String nodeName, Matrix4 newTransform) {
+  print("Continued panning node: $nodeName");
+
+  try {
+    // Find the node being panned
+    final pannedNode = nodes.firstWhere((element) => element.name == nodeName);
+
+    // Update the node's transform with the new transformation matrix
+    pannedNode.transform = newTransform;
+
+    // Optional: Log the new transformation matrix for debugging
+    print("New transform for $nodeName: $newTransform");
+  } catch (e) {
+    // Handle the case where the node is not found
+    print("Node not found: $nodeName");
+  }
+}
+
+#####################################################################################################################
