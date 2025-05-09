@@ -419,3 +419,41 @@ onPanEnded(String nodeName, Matrix4 newTransform) {
     print("Node not found: $nodeName");
   }
 }
+
+#####################################################################################################################
+9/5/2025 12:20
+onPanChanged(String nodeName, Matrix4 newTransform) {
+  print("Continued panning node: $nodeName");
+
+  try {
+    // Find the node being panned
+    final pannedNode = nodes.firstWhere((element) => element.name == nodeName);
+
+    // Update the node's transform with the new transformation matrix
+    pannedNode.transform = newTransform;
+
+    // Optional: Log the new transformation matrix for debugging
+    print("New transform for $nodeName: $newTransform");
+  } catch (e) {
+    // Handle the case where the node is not found
+    print("Node not found: $nodeName");
+  }
+}
+
+onPanEnded(String nodeName, Matrix4 newTransform) {
+  print("Ended panning node: $nodeName");
+
+  try {
+    // Find the node being panned
+    final pannedNode = nodes.firstWhere((element) => element.name == nodeName);
+
+    // Apply the final transformation to the node
+    pannedNode.transform = newTransform;
+
+    // Optional: Log the final transformation matrix for debugging
+    print("Final transform for $nodeName: $newTransform");
+  } catch (e) {
+    // Handle the case where the node is not found
+    print("Node not found: $nodeName");
+  }
+}
