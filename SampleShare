@@ -793,3 +793,52 @@ void onARViewCreated(
 
 // ...existing code...
 #####################################################################################################################
+
+import 'package:vector_math/vector_math_64.dart';
+// ...existing code...
+
+void onRotationEnded(String nodeName, Matrix4 newTransform) {
+  print("Ended rotating node $nodeName");
+  final rotatedNode = nodes.firstWhere((element) => element.name == nodeName);
+
+  // Extract rotation (as quaternion) and translation from the newTransform
+  Vector3 translation = Vector3.zero();
+  Quaternion rotation = Quaternion.identity();
+  Vector3 scale = Vector3.zero();
+  newTransform.decompose(translation, rotation, scale);
+
+  // Remove scaling by setting scale to (1,1,1)
+  Matrix4 pureRotation = Matrix4.compose(
+    translation,
+    rotation,
+    Vector3(1.0, 1.0, 1.0),
+  );
+
+  rotatedNode.transform = pureRotation;
+
+  print("Applied rotation without scaling for $nodeName: $pureRotation");
+}
+// ...existing code...
+void onRotationChanged(String nodeName, Matrix4 newTransform) {
+  print("Continued rotating node $nodeName");
+  try {
+    final rotatedNode = nodes.firstWhere((element) => element.name == nodeName);
+
+    Vector3 translation = Vector3.zero();
+    Quaternion rotation = Quaternion.identity();
+    Vector3 scale = Vector3.zero();
+    newTransform.decompose(translation, rotation, scale);
+
+    Matrix4 pureRotation = Matrix4.compose(
+      translation,
+      rotation,
+      Vector3(1.0, 1.0, 1.0),
+    );
+
+    rotatedNode.transform = pureRotation;
+    print("Live rotation without scaling for $nodeName: $pureRotation");
+  } catch (e) {
+    print("Node not found: $nodeName");
+  }
+}
+#####################################################################################################################
