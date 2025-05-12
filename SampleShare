@@ -703,3 +703,32 @@ void onARViewCreated(
   this.arObjectManager!.onRotationChange = onRotationChanged;
   this.arObjectManager!.onRotationEnd = onRotationEnded;
 }
+#####################################################################################################################
+// ...existing code...
+
+  void onRotationChanged(String nodeName, Matrix4 newTransform) {
+    print("Continued rotating node: $nodeName");
+
+    try {
+      final rotatedNode = nodes.firstWhere((element) => element.name == nodeName);
+      rotatedNode.transform = newTransform;
+      print("Live transform for $nodeName: $newTransform");
+    } catch (e) {
+      print("Node not found: $nodeName");
+    }
+  }
+
+// ...existing code...
+
+  onRotationEnded(String nodeName, Matrix4 newTransform) {
+    print("Ended rotating node $nodeName");
+    final rotatedNode = nodes.firstWhere((element) => element.name == nodeName);
+
+    // Update the node's transform with the new transformation matrix
+    rotatedNode.transform = newTransform;
+
+    // Optional: Log the new transformation matrix for debugging
+    print("New transform for $nodeName: $newTransform");
+  }
+
+// ...existing code...
