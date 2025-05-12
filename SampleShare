@@ -634,3 +634,72 @@ void onScaleEnded(String nodeName, double scaleFactor) {
 }
 
 #####################################################################################################################
+Rotate guesture 
+void onRotationStarted(String nodeName) {
+  print("Started rotating node: $nodeName");
+}
+
+void onRotationChanged(String nodeName, double rotationAngle) {
+  print("Rotating node: $nodeName with angle: $rotationAngle");
+
+  try {
+    // Find the node being rotated
+    final rotatedNode = nodes.firstWhere((element) => element.name == nodeName);
+
+    // Update the node's rotation
+    rotatedNode.rotation = Vector4(0.0, 1.0, 0.0, rotationAngle);
+
+    // Optional: Log the new rotation for debugging
+    print("New rotation for $nodeName: ${rotatedNode.rotation}");
+  } catch (e) {
+    // Handle the case where the node is not found
+    print("Node not found: $nodeName");
+  }
+}
+
+void onRotationEnded(String nodeName, double rotationAngle) {
+  print("Ended rotating node: $nodeName");
+
+  try {
+    // Find the node being rotated
+    final rotatedNode = nodes.firstWhere((element) => element.name == nodeName);
+
+    // Apply the final rotation to the node
+    rotatedNode.rotation = Vector4(0.0, 1.0, 0.0, rotationAngle);
+
+    // Optional: Log the final rotation for debugging
+    print("Final rotation for $nodeName: ${rotatedNode.rotation}");
+  } catch (e) {
+    // Handle the case where the node is not found
+    print("Node not found: $nodeName");
+  }
+}
+
+void onARViewCreated(
+  ARSessionManager arSessionManager,
+  ARObjectManager arObjectManager,
+  ARAnchorManager arAnchorManager,
+  ARLocationManager arLocationManager,
+) {
+  this.arSessionManager = arSessionManager;
+  this.arObjectManager = arObjectManager;
+  this.arAnchorManager = arAnchorManager;
+
+  this.arSessionManager!.onInitialize(
+    showFeaturePoints: false,
+    showPlanes: true,
+    customPlaneTexturePath: "Images/triangle.png",
+    showWorldOrigin: true,
+    handlePans: true,
+    handleRotation: true, // Enable rotation gestures
+  );
+  this.arObjectManager!.onInitialize();
+
+  this.arSessionManager!.onPlaneOrPointTap = onPlaneOrPointTapped;
+  this.arObjectManager!.onPanStart = onPanStarted;
+  this.arObjectManager!.onPanChange = onPanChanged;
+  this.arObjectManager!.onPanEnd = onPanEnded;
+  this.arObjectManager!.onRotationStart = onRotationStarted;
+  this.arObjectManager!.onRotationChange = onRotationChanged;
+  this.arObjectManager!.onRotationEnd = onRotationEnded;
+}
