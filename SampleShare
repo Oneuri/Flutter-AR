@@ -557,3 +557,80 @@ void onPanChanged(String nodeName, Matrix4 newTransform) {
 }
 
 #####################################################################################################################
+12/5/25 Monday
+void onARViewCreated(
+  ARSessionManager arSessionManager,
+  ARObjectManager arObjectManager,
+  ARAnchorManager arAnchorManager,
+  ARLocationManager arLocationManager,
+) {
+  this.arSessionManager = arSessionManager;
+  this.arObjectManager = arObjectManager;
+  this.arAnchorManager = arAnchorManager;
+
+  this.arSessionManager!.onInitialize(
+    showFeaturePoints: false,
+    showPlanes: true,
+    customPlaneTexturePath: "Images/triangle.png",
+    showWorldOrigin: true,
+    handlePans: true,
+    handleRotation: true,
+    handleScales: true, // Enable scale gestures
+  );
+  this.arObjectManager!.onInitialize();
+
+  this.arSessionManager!.onPlaneOrPointTap = onPlaneOrPointTapped;
+  this.arObjectManager!.onPanStart = onPanStarted;
+  this.arObjectManager!.onPanChange = onPanChanged;
+  this.arObjectManager!.onPanEnd = onPanEnded;
+  this.arObjectManager!.onRotationStart = onRotationStarted;
+  this.arObjectManager!.onRotationChange = onRotationChanged;
+  this.arObjectManager!.onRotationEnd = onRotationEnded;
+
+  // Assign scale gesture handlers
+  this.arObjectManager!.onScaleStart = onScaleStarted;
+  this.arObjectManager!.onScaleChange = onScaleChanged;
+  this.arObjectManager!.onScaleEnd = onScaleEnded;
+}
+
+void onScaleStarted(String nodeName) {
+  print("Started scaling node: $nodeName");
+}
+
+void onScaleChanged(String nodeName, double scaleFactor) {
+  print("Scaling node: $nodeName with scale factor: $scaleFactor");
+
+  try {
+    // Find the node being scaled
+    final scaledNode = nodes.firstWhere((element) => element.name == nodeName);
+
+    // Update the node's scale
+    scaledNode.scale = Vector3.all(scaleFactor);
+
+    // Optional: Log the new scale for debugging
+    print("New scale for $nodeName: ${scaledNode.scale}");
+  } catch (e) {
+    // Handle the case where the node is not found
+    print("Node not found: $nodeName");
+  }
+}
+
+void onScaleEnded(String nodeName, double scaleFactor) {
+  print("Ended scaling node: $nodeName");
+
+  try {
+    // Find the node being scaled
+    final scaledNode = nodes.firstWhere((element) => element.name == nodeName);
+
+    // Apply the final scale to the node
+    scaledNode.scale = Vector3.all(scaleFactor);
+
+    // Optional: Log the final scale for debugging
+    print("Final scale for $nodeName: ${scaledNode.scale}");
+  } catch (e) {
+    // Handle the case where the node is not found
+    print("Node not found: $nodeName");
+  }
+}
+
+#####################################################################################################################
