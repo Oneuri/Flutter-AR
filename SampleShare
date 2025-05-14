@@ -1050,3 +1050,56 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
   }
 }
 #####################################################################################################################
+updated by copi on above
+@override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Object Transformation Gestures')),
+      body: Container(
+        child: Stack(
+          children: [
+            GestureDetector(
+              onPanUpdate: (details) {
+                // Only rotate if there is at least one node
+                if (nodes.isNotEmpty) {
+                  // Horizontal drag delta controls rotation
+                  double rotationDelta = details.delta.dx * 0.01; // Adjust sensitivity as needed
+                  _rotateLastNode(rotationDelta);
+                }
+              },
+              child: ARView(
+                onARViewCreated: onARViewCreated,
+                planeDetectionConfig: PlaneDetectionConfig.horizontalAndVertical,
+              ),
+            ),
+            Align(
+              alignment: FractionalOffset.bottomCenter,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: onRemoveEverything,
+                    child: Text("Remove Everything"),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _rotateLastNode(double delta) async {
+    // Get the last node
+    ARNode node = nodes.last;
+    // Get current rotation
+    Vector4 currentRotation = node.rotation ?? Vector4(0, 1, 0, 0);
+    // Update the rotation angle (around Y axis)
+    double newAngle = _lastRotation + delta;
+    node.rotation = Vector4(0, 1, 0, newAngle);
+    await arObjectManager?.updateNode(node);
+    _lastRotation = newAngle;
+    setState(() {});
+  }
+#####################################################################################################################
