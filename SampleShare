@@ -842,3 +842,66 @@ void onRotationChanged(String nodeName, Matrix4 newTransform) {
   }
 }
 #####################################################################################################################
+14 may 2025
+
+// ...existing code...
+
+class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
+  // ...existing code...
+
+  double _rotationY = 0.0; // Track rotation around Y axis
+
+  // ...existing code...
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Object Transformation Gestures'),
+      ),
+      body: Container(
+        child: Stack(
+          children: [
+            GestureDetector(
+              onHorizontalDragUpdate: (details) {
+                setState(() {
+                  // Adjust sensitivity as needed
+                  _rotationY += details.delta.dx * 0.01;
+                  _updateModelRotation();
+                });
+              },
+              child: ARView(
+                onARViewCreated: onARViewCreated,
+                planeDetectionConfig: PlaneDetectionConfig.horizontalAndVertical,
+              ),
+            ),
+            Align(
+              alignment: FractionalOffset.bottomCenter,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: onRemoveEverything,
+                    child: Text("Remove Everything"),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _updateModelRotation() {
+    if (nodes.isNotEmpty) {
+      final node = nodes.last; // Or select the node you want to rotate
+      // Create a new rotation quaternion for Y axis
+      node.rotation = Vector4(0, 1, 0, _rotationY);
+      arObjectManager?.updateNode(node);
+    }
+  }
+
+  // ...existing code...
+}
+#####################################################################################################################
