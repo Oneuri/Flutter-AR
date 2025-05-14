@@ -1103,3 +1103,23 @@ updated by copi on above
     setState(() {});
   }
 #####################################################################################################################
+Rotation AR heatmap logic
+double YRadian = vector.radians(currentRotation.yInDegrees);
+
+    vector.Quaternion rotationQuatVal =
+        vector.Quaternion.axisAngle(vector.Vector3(0, 1, 0), YRadian);
+
+    var rotation = vector.Vector4(rotationQuatVal.x, rotationQuatVal.y,
+        rotationQuatVal.z, rotationQuatVal.w);
+
+    objectNode = ArCoreNode(
+      name: "main",
+      shape: null,
+      position: vector.Vector3(xLocation, yLocation, zLocation),
+      rotation: rotation,
+      children: newList,
+    );
+
+    arCoreController?.addArCoreNodeWithAnchor(objectNode!);
+    return updatedScale;
+#####################################################################################################################
