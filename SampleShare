@@ -1125,3 +1125,58 @@ double YRadian = vector.radians(currentRotation.yInDegrees);
 #####################################################################################################################
 https://meet.google.com/oim-rfpb-vjo
 #####################################################################################################################
+Initial rotation logic with tried with Amol and Aniruddha
+ 
+void _rotateLastNode(double delta) async {
+    ARNode node = nodes.last;
+
+    _lastRotation += delta;
+
+    double newAngle = _lastRotation + delta;
+
+    var YRadian = radians(newAngle);
+
+    // Quaternion rotationQuatVal = Quaternion.axisAngle(
+    //   Vector3(0, 1, 0),
+    //   YRadian,
+    // );
+
+    //var currentPosition = _newNode.position;
+    //var currentScale = _newNode.scale;
+    //arObjectManager?.removeNode(_newNode);
+
+    //_newNode.position = currentPosition;
+    //_newNode.scale = currentScale;
+    //_newNode.rotationFromQuaternion = rotationQuatVal;
+
+    //nodes.add(_newNode);
+    double angle = 0.5236;
+
+    var cosValue = cos(angle);
+    var sinValue = sin(angle);
+
+    var rotationMatrix = new Matrix3(
+      cosValue,
+      0,
+      sinValue,
+      0,
+      1,
+      0,
+      (-1) * sinValue,
+      0,
+      cosValue,
+    );
+
+    //await arObjectManager?.updateNode(node);
+    var currentTransform = _newNode.transform;
+    currentTransform.setRotationY(angle);
+
+    _newNode.transform = currentTransform;
+
+    setState(() {
+      // var currentScale = node.scale;
+      // node.rotation = rotationMatrix;
+      // node.scale = currentScale;
+    });
+  }
+#####################################################################################################################
